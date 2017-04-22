@@ -7,28 +7,44 @@ header <- dashboardHeader(title = "Eesti Meedia", disable = FALSE)
 
 # Sidebar elements for the search visualizations
 sidebar <- dashboardSidebar(
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$script(src = "custom.js")
-  ),
-  
+   
   sidebarMenu(
-    selectInput("variable", "Variable:",
-                c("Cylinders" = "cyl",
-                  "Transmission" = "am",
-                  "Gears" = "gear")),
-    menuItem(text = "Vali sõnaliik",
-             selectInput("variable", "Variable:",
-                         c("Cylinders" = "cyl",
-                           "Transmission" = "am",
-                           "Gears" = "gear"))
-    ) # /menuItem
+    selectInput("sonaliik", "Vali sõnaliik:",
+                c("Nimisõna" = "S",
+                  "Tegusõna" = "V", 
+                  "Asesõna" = "P",
+                  "Hüüdsõna" = "I",
+                  "Järgarvsõna" = "O",
+                  "Käändamatu omadussõna" = "G",
+                  "Kaassõna" = "K",
+                  "Lausemärk" = "Z",
+                  "Lühend" = "Y",
+                  "Määrsõna" = "D",
+                  "Omadussõna algvõrre" = "A",
+                  "Omadussõna keskvõrre" = "C",
+                  "Omadussõna ülivõrre" = "U",
+                  "Pärisnimi" = "H", 
+                  "Põhiarvsõna" = "N",
+                  "Sidesõna" = "J",
+                  "Verbi juurde kuuluv sõna" = "X"
+                  ))
+
     # this is where other menuItems & menuSubItems would go
   ) # /sidebarMenu
 ) # /dashboardSidebar
 
 #Body elements for the search visualizations.
 body <- dashboardBody(
+  tags$head(
+    #tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+    tags$script(src = "custom.js"),
+    tags$style(HTML('/* main sidebar */
+                    .skin-purple .main-sidebar {
+                    background-color:  grey;
+                    }
+                    '))
+  ),
+  
   tabItems(
     tabItem(tabName = "kpis_summary",
             fluidRow(valueBoxOutput("kpi_summary_box_1", width = 4),
