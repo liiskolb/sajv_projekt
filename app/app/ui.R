@@ -44,18 +44,30 @@ body <- dashboardBody(
                     }
                     '))
   ),
-  
-  tabItems(
-    tabItem(tabName = "kpis_summary",
-            fluidRow(valueBoxOutput("kpi_summary_box_1", width = 4),
-                     valueBoxOutput("kpi_summary_box_2", width = 4),
-                     valueBoxOutput("kpi_summary_box_3", width = 4)),
-            p('Include documentation via includeMarkdown("./assets/kpis_summary.md") ')
+  fluidRow(
+    box(title="Sõnaliigi jaotus", plotOutput("jaotus"), background = "maroon"),
+    box(title="Sõnapilv", plotOutput("sonapilv"), background = "maroon")
+  ),
+  fluidRow(
+    tabBox(
+      title = "10 populaarseimat sõna",
+      # The id lets us use input$tabset1 on the server to find the current tab
+      id = "tabset1",
+      tabPanel("Delfi", plotOutput("top_delfi")),
+      tabPanel("ERR", plotOutput("top_err")),
+      tabPanel("Õhtuleht", plotOutput("top_ohtuleht")),
+      tabPanel("Postimees", plotOutput("top_postimees"))
     ),
-    tabItem(tabName = "kpi_1",
-            # e.g. plotOutput(), textOutput(), dygraphOutput(), etc.
-            p('includeMarkdown("./assets/kpi_1.md") is kinda like a README for this module'))
-  ) # /tabItems
+    tabBox(
+      title = "Unikaalsed sõnad",
+      # The id lets us use input$tabset1 on the server to find the current tab
+      id = "tabset2",
+      tabPanel("Delfi", plotOutput("uni_delfi")),
+      tabPanel("ERR", plotOutput("uni_err")),
+      tabPanel("Õhtuleht", plotOutput("uni_ohtuleht")),
+      tabPanel("Postimees", plotOutput("uni_postimees"))
+    )
+  )
 ) # /dashboardBody
 
 
