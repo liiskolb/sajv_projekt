@@ -4,7 +4,7 @@ library(wordcloud)
 library(scales)
 library(reshape2)
 
-cleandata <- read.csv("~/Desktop/DOK/K_2017/Andmete_visualiseerimine/Projekt/sajv_projekt/data/meediadata_cleaned1.csv")
+cleandata <- read.csv("../data/meediadata_cleaned1.csv")
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
 # eemalda tühjad postagid
 cleandata <- cleandata %>% subset(postag_descriptions!="")
