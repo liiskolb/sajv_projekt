@@ -24,7 +24,7 @@ sonade_jaotus = function(cleandata, sonaliik, colors, allikad, ilus_allikad){
 
 plot_wordcloud <- function(cleandata, sonaliik){
   subdata <- cleandata %>% select(postags, allikas, lemmas) %>% group_by(lemmas) %>% mutate(count = n()) %>% subset(postags==sonaliik) %>% distinct(lemmas, .keep_all = TRUE)
-  wc <- wordcloud(subdata$lemmas, subdata$count, max.words = 100, min.freq = 1, random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=FALSE)
+  wc <- wordcloud(subdata$lemmas, subdata$count, max.words = 100, min.freq = 1, random.order=TRUE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
   return(wc)
 }
 

@@ -45,8 +45,8 @@ body <- dashboardBody(
                     '))
   ),
   fluidRow(
-    box(title="Sõnaliigi jaotus", plotOutput("jaotus"), background = "maroon"),
-    box(title="Sõnapilv", plotOutput("sonapilv"), background = "maroon")
+    box(title="Sõnaliigi jaotus", plotOutput("jaotus"), background = "purple"),
+    box(title="Sõnapilv", plotOutput("sonapilv"), background = "purple")
   ),
   fluidRow(
     tabBox(
