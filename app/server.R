@@ -73,7 +73,12 @@ unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
   subdata <- cleandata %>% select(postags, allikas, lemmas, word_texts) %>% subset(postags==sonaliik) %>% group_by(allikas, lemmas) %>%
     distinct(allikas, lemmas, .keep_all = TRUE) %>%  group_by(lemmas) %>% mutate(count = n()) %>% filter(count==1) 
   }
-  wc <- wordcloud(subdata[subdata$allikas==source, ]$lemmas, subdata[subdata$allikas==source,]$count, scale=c(1,.2), random.order=TRUE, rot.per=0.1, colors=colors[[source]],random.color=FALSE, max.words=60)
+  if (sum(subdata$allikas==source)>0){
+    wc <- wordcloud(subdata[subdata$allikas==source, ]$lemmas, subdata[subdata$allikas==source,]$count, scale=c(1,.2), random.order=TRUE, rot.per=0.1, colors=colors[[source]],random.color=FALSE, max.words=60)
+  }
+  else{
+    wc <- c()
+  }
   return(wc)
 }
 
