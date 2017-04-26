@@ -39,6 +39,7 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "dashboard",
             h2("Pealkirjades esinevate sõnade ülevaade"),
+            br(),
             fluidRow(
               box(
                 selectInput("sonaliik", "Vali sõnaliik mida kuvada:",
@@ -92,7 +93,9 @@ body <- dashboardBody(
     ),
     
     tabItem(tabName = "widgets",
-            h2("Pealkirjade analüüs")
+              h2("Pealkirjade analüüs"),
+            br(),
+              box(title=NULL, width = NULL, height=NULL, plotlyOutput("pca"), background = "purple")
     )
   )
   

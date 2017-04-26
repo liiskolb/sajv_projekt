@@ -3,6 +3,8 @@ library(ggplot2)
 library(wordcloud)
 library(scales)
 library(reshape2)
+library(plotly)
+library(ggfortify)
 
 cleandata <- read.csv("../data/meediadata_cleaned1.csv")
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
@@ -74,12 +76,31 @@ unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
     distinct(allikas, lemmas, .keep_all = TRUE) %>%  group_by(lemmas) %>% mutate(count = n()) %>% filter(count==1) 
   }
   if (sum(subdata$allikas==source)>0){
-    wc <- wordcloud(subdata[subdata$allikas==source, ]$lemmas, subdata[subdata$allikas==source,]$count, scale=c(1,.2), random.order=TRUE, rot.per=0.1, colors=colors[[source]],random.color=FALSE, max.words=60)
+    wc <- wordcloud(subdata[subdata$allikas==source, ]$lemmas, subdata[subdata$allikas==source,]$count, scale=c(1.1,.2), random.order=TRUE, rot.per=0.1, colors=colors[[source]],random.color=FALSE, max.words=60)
   }
   else{
     wc <- c()
   }
   return(wc)
+}
+
+plot_pca = function(data, colors, allikad, ilus_allikad){
+  colors <- c("#ffc820", "#0054a6", "#cf0007")
+  names(colors) <- c("setosa", "versicolor", "virginica")
+  ilus_allikad <- c("Setosa", "Versicolor", "Virginica")
+  pca = prcomp(data[,1:4], center = TRUE, scale. = TRUE)
+  pca.fortify <- fortify(pca)
+  #pca.dat <- cbind(pca.fortify, group=data$allikas)
+  pca.dat <- cbind(pca.fortify, group=data$Species)
+  
+  p <- ggplot(pca.dat) +
+    geom_point(aes(x=PC1, y=PC2, col=factor(group), text=rownames(pca.dat)), size=2, alpha=0.55) + theme_bw() +
+    scale_colour_manual(values = colors, labels=ilus_allikad) + theme(legend.title=element_blank(), legend.position="bottom")
+  
+  pl <- ggplotly(p, tooltip = c("text")) %>%
+    layout(legend = list(x=-5, y=-40))
+  
+  return(pl)
 }
 
 
@@ -99,4 +120,7 @@ shinyServer(function(input, output) {
   output$uni_err <- renderPlot({unikaalsed_sonad(cleandata, sonaliik=input$sonaliik, colors, source="err")})
   output$uni_ohtuleht <- renderPlot({unikaalsed_sonad(cleandata, sonaliik=input$sonaliik, colors, source="ohtuleht")})
   output$uni_postimees <- renderPlot({unikaalsed_sonad(cleandata, sonaliik=input$sonaliik, colors, source="postimees")})
-})
+  
+  output$pca <- renderPlotly({plot_pca(iris, colors, allikad, ilus_allikad)})
+  
+  })
