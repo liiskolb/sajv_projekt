@@ -6,6 +6,7 @@ library(reshape2)
 library(plotly)
 library(ggfortify)
 
+
 cleandata <- read.csv("../data/meediadata_cleaned1.csv")
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
 # eemalda tühjad postagid
@@ -35,7 +36,6 @@ sonade_jaotus = function(cleandata, sonaliik, colors, allikad, ilus_allikad){
     p <- ggplot(subdata, aes(x=allikas, y=freq, fill=allikas)) + geom_bar(stat="identity") + scale_y_continuous(labels=percent) +
       theme_bw() + scale_fill_manual(breaks = allikad, values=colors, labels=ilus_allikad) + labs(y="Osakaal") + theme(axis.title.x=element_blank(), axis.text.x=element_blank(),
                                                                                                                        axis.ticks.x=element_blank(), legend.title=element_blank(), legend.position="bottom")
-    
   }
   
   return(p)                                                                                                               
@@ -69,7 +69,7 @@ top_sonad = function(cleandata, sonaliik, source, colors){
 unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
   if(sonaliik=="koik"){
     subdata <- cleandata %>% select(postags, allikas, lemmas, word_texts) %>% group_by(allikas, lemmas) %>%
-      distinct(allikas, lemmas, .keep_all = TRUE) %>%  group_by(lemmas) %>% mutate(count = n()) %>% filter(count==1)
+      distinct(allikas, lemmas, .keep_all = TRUE) %>% group_by(lemmas) %>% mutate(count = n()) %>% filter(count==1)
   }
   else{
   subdata <- cleandata %>% select(postags, allikas, lemmas, word_texts) %>% subset(postags==sonaliik) %>% group_by(allikas, lemmas) %>%
@@ -97,8 +97,8 @@ plot_pca = function(data, colors, allikad, ilus_allikad){
     geom_point(aes(x=PC1, y=PC2, col=factor(group), text=rownames(pca.dat)), size=2, alpha=0.55) + theme_bw() +
     scale_colour_manual(values = colors, labels=ilus_allikad) + theme(legend.title=element_blank(), legend.position="bottom")
   
-  pl <- ggplotly(p, tooltip = c("text")) %>%
-    layout(legend = list(x=-5, y=-40))
+  pl <- ggplotly(p, tooltip = c("text")) 
+    #  %>% layout(legend = list(x=-5, y=-40)) -> pl
   
   return(pl)
 }

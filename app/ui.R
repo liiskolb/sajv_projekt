@@ -9,7 +9,7 @@ header <- dashboardHeader(title = "Eesti Meedia", disable = FALSE)
 sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Sõnade ülevaade", tabName = "dashboard", icon = icon("bar-chart")),
-    menuItem("Lause analüüs", icon = icon("area-chart"), tabName = "widgets"),
+    menuItem("Pealkirjade analüüs", icon = icon("area-chart"), tabName = "widgets"),
     menuItem("Meist", tabName = "info", icon = icon("info"))
   )
 )
@@ -91,11 +91,10 @@ body <- dashboardBody(
             )
             
     ),
-    
     tabItem(tabName = "widgets",
               h2("Pealkirjade analüüs"),
-            br(),
-              box(title=NULL, width = NULL, height=NULL, plotlyOutput("pca"), background = "purple")
+              br(),
+              box(title=NULL, width = NULL, height=NULL, plotlyOutput("pca", height="100%"), background = "purple")
     )
   )
   
