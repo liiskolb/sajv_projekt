@@ -40,6 +40,9 @@ body <- dashboardBody(
     tabItem(tabName = "dashboard",
             h2("Pealkirjades esinevate sõnade ülevaade"),
             br(),
+            p("Näitame sõnade proportsionaalset jaotust vastavalt valitud sõnaliigile ning visualiseerime sõnapilvena pealkirjades enim esinevaid sõnu. 
+              Kuvatud on ka 10 populaarseimat sõna uudiseportaali kaupa ning sõnad, mis unikaalselt on esinenud ainult valitud portaali pealkirjades. Eriti huvitavad sõnaliigid on näiteks hüüdsõnad ja omadussõna ülivõrded."),
+            p("Aga lase käia ja uudista ise!"),
             fluidRow(
               box(
                 selectInput("sonaliik", "Vali sõnaliik mida kuvada:",

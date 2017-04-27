@@ -6,8 +6,8 @@ library(reshape2)
 library(plotly)
 library(ggfortify)
 
-
 cleandata <- read.csv("../data/meediadata_cleaned1.csv")
+vectors <- read.csv("../data/vecs1.csv")
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
 # eemalda tühjad postagid
 cleandata <- cleandata %>% subset(postag_descriptions!="")
@@ -85,20 +85,21 @@ unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
 }
 
 plot_pca = function(data, colors, allikad, ilus_allikad){
-  colors <- c("#ffc820", "#0054a6", "#cf0007")
-  names(colors) <- c("setosa", "versicolor", "virginica")
-  ilus_allikad <- c("Setosa", "Versicolor", "Virginica")
-  pca = prcomp(data[,1:4], center = TRUE, scale. = TRUE)
+  pca = prcomp(data[,c(2:101,209:211)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
+  pca = prcomp(data[,c(2:101)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
   pca.fortify <- fortify(pca)
-  #pca.dat <- cbind(pca.fortify, group=data$allikas)
-  pca.dat <- cbind(pca.fortify, group=data$Species)
+  pca.dat <- cbind(pca.fortify, group=data$allikas, headline=data$cleaned_pealkiri)
   
   p <- ggplot(pca.dat) +
-    geom_point(aes(x=PC1, y=PC2, col=factor(group), text=rownames(pca.dat)), size=2, alpha=0.55) + theme_bw() +
-    scale_colour_manual(values = colors, labels=ilus_allikad) + theme(legend.title=element_blank(), legend.position="bottom")
+    geom_point(aes(x=PC1, y=PC2, fill=group, col=group, text=headline), position = position_jitter(w = 0.1, h = 0.1), size=1, alpha=0.6) + theme_bw() + scale_fill_manual(values = colors, breaks=names(colors)) + theme(legend.title=element_blank()) +
+    scale_color_manual(values = colors, breaks=names(colors))
   
-  pl <- ggplotly(p, tooltip = c("text")) 
-    #  %>% layout(legend = list(x=-5, y=-40)) -> pl
+  pl <- ggplotly(p, tooltip = c("text"))  %>% layout(legend = list(x = 0, y = 100, orientation = 'h'))
+  
+  pl$x$data[[1]]$name <- "Delfi"
+  pl$x$data[[2]]$name <- "ERR"
+  pl$x$data[[3]]$name <- "Õhtuleht"
+  pl$x$data[[4]]$name <- "Postimees"
   
   return(pl)
 }
@@ -121,6 +122,6 @@ shinyServer(function(input, output) {
   output$uni_ohtuleht <- renderPlot({unikaalsed_sonad(cleandata, sonaliik=input$sonaliik, colors, source="ohtuleht")})
   output$uni_postimees <- renderPlot({unikaalsed_sonad(cleandata, sonaliik=input$sonaliik, colors, source="postimees")})
   
-  output$pca <- renderPlotly({plot_pca(iris, colors, allikad, ilus_allikad)})
+  output$pca <- renderPlotly({plot_pca(vectors, colors, allikad, ilus_allikad)})
   
   })
