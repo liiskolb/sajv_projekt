@@ -7,7 +7,8 @@ library(plotly)
 library(ggfortify)
 
 cleandata <- read.csv("../data/meediadata_cleaned1.csv")
-vectors <- read.csv("../data/vecs1.csv")
+#vectors <- read.csv("../data/vecs1.csv")
+vectors <- read.csv("../data/vecs2.csv")
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
 # eemalda tühjad postagid
 cleandata <- cleandata %>% subset(postag_descriptions!="")
@@ -86,7 +87,7 @@ unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
 
 plot_pca = function(data, colors, allikad, ilus_allikad){
   pca = prcomp(data[,c(2:101,209:211)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
-  pca = prcomp(data[,c(2:101)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
+  #pca = prcomp(data[,c(2:101)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
   pca.fortify <- fortify(pca)
   pca.dat <- cbind(pca.fortify, group=data$allikas, headline=data$cleaned_pealkiri)
   
