@@ -3,7 +3,7 @@ library(shinydashboard)
 
 
 # Header elements for the visualization
-header <- dashboardHeader(title = "Eesti Meedia", disable = FALSE)
+header <- dashboardHeader(title = "TOHOH!", disable = FALSE)
 
 # Sidebar elements for the search visualizations
 sidebar <- dashboardSidebar(
@@ -31,9 +31,10 @@ body <- dashboardBody(
             br(),
             div(p("Tegemist on Tartu Ülikooli aine \"Statistiline andmeteadus ja visualiseerimine\" raames loodud rakendusega.")),
             br(),
-            p("Alates 12.aprillist 2017 on kord päevas kogutud artiklite pealkirju neljast Eesti uudiseportaalist:"),
+            p("Vahemikus 12-28.aprill 2017 on kord päevas kogutud artiklite pealkirju neljast Eesti uudiseportaalist:"),
             HTML("<ul><li>Delfi</li><li>ERR</li><li>Õhtuleht</li><li>Postimees</li></ul>"),
             p("Kogutud lausetest on esitatud mitmesugused ülevaatlikud visualisatsioonid."),
+            p(HTML("Kogutud pealkirjades esinevad sõnad on töötlemise ja võrdlemise lihtsustamiseks viidud algvormide tasemele kasutades <b>estnltk</b> paketti (<a href='https://estnltk.github.io'>https://estnltk.github.io</a>).")),
             br(),br(),
             p(HTML("<b>Kaebuste tekkimise korral pidage nõu Liis Kolbergi või Mari-Liis Allikiviga.</b>"))
     ),
@@ -97,7 +98,15 @@ body <- dashboardBody(
     tabItem(tabName = "widgets",
               h2("Pealkirjade analüüs"),
               br(),
-              box(title=NULL, width = NULL, height=NULL, plotlyOutput("pca", height="100%"), background = "purple")
+              p("Alloleval joonisel on näha üks võimalik uudisteportaalide pealkirjade klasterdus."),
+                p("Uudista ja vaata, milliseid pealkirjad näivad meie meetodi arvates sarnased!*"),
+            br(),
+              box(title=NULL, height="auto", width="auto", plotlyOutput("pca", height="auto", width="auto"), background = "purple"),
+            br(),
+            h4("Huvitatutele:"),
+            p(HTML("<ul><li>Et saada sõnadele vastavad numbrilised vektorid, kasutasime eesti keele jaoks valmis treenitud <b>Word2Vec’i</b> mudeleid algvormis sõnade jaoks (<a href='https://github.com/estnltk/word2vec-models/blob/master/README.md'>https://github.com/estnltk/word2vec-models/blob/master/README.md</a>, täpsemalt lemmas.sg.s100.w2v.bin.gz).</li>
+                   <li>Kuna klasterdada oli vaja lauseid, siis lausete vektorite jaoks summeerisime lauses esinevate sõnade vektorid.</li>
+                   <li>Niimoodi saadud lausete vektoritele rakendasime PCA meetodit ja voila!</li></ul>"))
     )
   )
   

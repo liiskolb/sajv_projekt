@@ -6,9 +6,8 @@ library(reshape2)
 library(plotly)
 library(ggfortify)
 
-cleandata <- read.csv("../data/meediadata_cleaned1.csv")
-#vectors <- read.csv("../data/vecs1.csv")
-vectors <- read.csv("../data/vecs2.csv")
+cleandata <- read.csv("../data/meediadata_cleaned2.csv")
+vectors <- read.csv("../data/vecs_final2.csv")
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
 # eemalda tühjad postagid
 cleandata <- cleandata %>% subset(postag_descriptions!="")
@@ -38,46 +37,45 @@ sonade_jaotus = function(cleandata, sonaliik, colors, allikad, ilus_allikad){
       theme_bw() + scale_fill_manual(breaks = allikad, values=colors, labels=ilus_allikad) + labs(y="Osakaal") + theme(axis.title.x=element_blank(), axis.text.x=element_blank(),
                                                                                                                        axis.ticks.x=element_blank(), legend.title=element_blank(), legend.position="bottom")
   }
-  
   return(p)                                                                                                               
 }
 
 plot_wordcloud <- function(cleandata, sonaliik){
   if (sonaliik=="koik"){
-    subdata <- cleandata %>% select(postags, allikas, lemmas) %>% group_by(lemmas) %>% mutate(count = n()) %>% distinct(lemmas, .keep_all = TRUE)
+    subdata <- cleandata %>% select(postags, allikas, lemmas_clean) %>% group_by(lemmas_clean) %>% mutate(count = n()) %>% distinct(lemmas_clean, .keep_all = TRUE)
   }
   else{
-    subdata <- cleandata %>% select(postags, allikas, lemmas) %>% group_by(lemmas) %>% mutate(count = n()) %>% subset(postags==sonaliik) %>% distinct(lemmas, .keep_all = TRUE)
+    subdata <- cleandata %>% select(postags, allikas, lemmas_clean) %>% group_by(lemmas_clean) %>% mutate(count = n()) %>% subset(postags==sonaliik) %>% distinct(lemmas_clean, .keep_all = TRUE)
   }
-  wc <- wordcloud(subdata$lemmas, subdata$count, max.words = 200, min.freq = 1, random.order=TRUE, colors=brewer.pal(8,"Dark2"), random.color=FALSE)
+  wc <- wordcloud(subdata$lemmas_clean, subdata$count, max.words = 200, min.freq = 1, random.order=TRUE, colors=brewer.pal(8,"Dark2"), random.color=FALSE)
   return(wc)
 }
 
 top_sonad = function(cleandata, sonaliik, source, colors){
   if (sonaliik=="koik"){
-    subdata <- cleandata %>% select(postags, allikas, lemmas) %>% subset(allikas==source) %>%
-      group_by(lemmas) %>% mutate(count = n()) %>% filter(row_number(lemmas) == 1) %>% ungroup() %>% mutate(lemmas=as.character(lemmas))
+    subdata <- cleandata %>% select(postags, allikas, lemmas_clean) %>% subset(allikas==source) %>%
+      group_by(lemmas_clean) %>% mutate(count = n()) %>% filter(row_number(lemmas_clean) == 1) %>% ungroup() %>% mutate(lemmas_clean=as.character(lemmas_clean))
   }
   else{
-    subdata <- cleandata %>% select(postags, allikas, lemmas) %>% subset(allikas==source & postags==sonaliik) %>%
-      group_by(lemmas) %>% mutate(count = n()) %>% filter(row_number(lemmas) == 1) %>% ungroup() %>% mutate(lemmas=as.character(lemmas))
+    subdata <- cleandata %>% select(postags, allikas, lemmas_clean) %>% subset(allikas==source & postags==sonaliik) %>%
+      group_by(lemmas_clean) %>% mutate(count = n()) %>% filter(row_number(lemmas_clean) == 1) %>% ungroup() %>% mutate(lemmas_clean=as.character(lemmas_clean))
   }
   top10 <- top_n(arrange(subdata, desc(count)), 10, count)
-  p <- ggplot(top10, aes(x=reorder(as.factor(lemmas), count), y=count)) + geom_bar(stat="identity", fill=colors[[source]]) + theme_bw() + coord_flip() + xlab("Sõna") + ylab("Sagedus")
+  p <- ggplot(top10, aes(x=reorder(as.factor(lemmas_clean), count), y=count)) + geom_bar(stat="identity", fill=colors[[source]]) + theme_bw() + coord_flip() + xlab("Sõna") + ylab("Sagedus")
   return(p)
 }
 
 unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
   if(sonaliik=="koik"){
-    subdata <- cleandata %>% select(postags, allikas, lemmas, word_texts) %>% group_by(allikas, lemmas) %>%
-      distinct(allikas, lemmas, .keep_all = TRUE) %>% group_by(lemmas) %>% mutate(count = n()) %>% filter(count==1)
+    subdata <- cleandata %>% select(postags, allikas, lemmas_clean, word_texts) %>% group_by(allikas, lemmas_clean) %>%
+      distinct(allikas, lemmas_clean, .keep_all = TRUE) %>% group_by(lemmas_clean) %>% mutate(count = n()) %>% filter(count==1)
   }
   else{
-  subdata <- cleandata %>% select(postags, allikas, lemmas, word_texts) %>% subset(postags==sonaliik) %>% group_by(allikas, lemmas) %>%
-    distinct(allikas, lemmas, .keep_all = TRUE) %>%  group_by(lemmas) %>% mutate(count = n()) %>% filter(count==1) 
+  subdata <- cleandata %>% select(postags, allikas, lemmas_clean, word_texts) %>% subset(postags==sonaliik) %>% group_by(allikas, lemmas_clean) %>%
+    distinct(allikas, lemmas_clean, .keep_all = TRUE) %>%  group_by(lemmas_clean) %>% mutate(count = n()) %>% filter(count==1) 
   }
   if (sum(subdata$allikas==source)>0){
-    wc <- wordcloud(subdata[subdata$allikas==source, ]$lemmas, subdata[subdata$allikas==source,]$count, scale=c(1.1,.2), random.order=TRUE, rot.per=0.1, colors=colors[[source]],random.color=FALSE, max.words=60)
+    wc <- wordcloud(subdata[subdata$allikas==source, ]$lemmas_clean, subdata[subdata$allikas==source,]$count, scale=c(1.1,.2), random.order=TRUE, rot.per=0.1, colors=colors[[source]],random.color=FALSE, max.words=60)
   }
   else{
     wc <- c()
@@ -86,27 +84,25 @@ unikaalsed_sonad = function(cleandata, sonaliik, colors, source){
 }
 
 plot_pca = function(data, colors, allikad, ilus_allikad){
-  pca = prcomp(data[,c(2:101,209:211)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
-  #pca = prcomp(data[,c(2:101)], center = TRUE, scale. = TRUE) #viimased 3 sisse?
+  pca = prcomp(data[,c(2:101)], center = TRUE, scale. = TRUE) 
   pca.fortify <- fortify(pca)
   pca.dat <- cbind(pca.fortify, group=data$allikas, headline=data$cleaned_pealkiri)
   
   p <- ggplot(pca.dat) +
-    geom_point(aes(x=PC1, y=PC2, fill=group, col=group, text=headline), position = position_jitter(w = 0.1, h = 0.1), size=1, alpha=0.6) + theme_bw() + scale_fill_manual(values = colors, breaks=names(colors)) + theme(legend.title=element_blank()) +
+    geom_point(aes(x=PC1, y=PC2, fill=group, col=group, text=headline), position = position_jitter(w = 0.2, h = 0.2), size=1, alpha=0.4) + theme_bw() + scale_fill_manual(values = colors, breaks=names(colors)) + 
+    theme(aspect.ratio=1, legend.title=element_blank()) +
     scale_color_manual(values = colors, breaks=names(colors))
   
-  pl <- ggplotly(p, tooltip = c("text"))  %>% layout(legend = list(x = 0, y = 100, orientation = 'h'))
-  
+  pl <- ggplotly(p, tooltip = c("text")) %>% layout(legend = list(x = 0, y = 100, orientation = 'h')) 
   pl$x$data[[1]]$name <- "Delfi"
   pl$x$data[[2]]$name <- "ERR"
   pl$x$data[[3]]$name <- "Õhtuleht"
   pl$x$data[[4]]$name <- "Postimees"
-  
   return(pl)
 }
 
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   output$jaotus <- renderPlot({
     sonade_jaotus(cleandata, sonaliik=input$sonaliik, colors, allikad, ilus_allikad)
   })
