@@ -1,7 +1,6 @@
 library(shiny)
 library(shinydashboard)
 
-
 # Header elements for the visualization
 header <- dashboardHeader(title = "TOHOH!", disable = FALSE)
 

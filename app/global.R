@@ -1,0 +1,7 @@
+library(dplyr)
+library(ggplot2)
+library(wordcloud)
+library(scales)
+library(reshape2)
+library(plotly)
+library(ggfortify)
