@@ -71,9 +71,14 @@ plot_pca = function(data, colors, allikad, ilus_allikad){
   pca.dat <- cbind(pca.fortify, group=data$allikas, headline=data$cleaned_pealkiri)
   
   p <- ggplot(pca.dat) +
-    geom_point(aes(x=PC1, y=PC2, fill=group, col=group, text=headline), position = position_jitter(w = 0.2, h = 0.2), size=1, alpha=0.4) + theme_bw() + scale_fill_manual(values = colors, breaks=names(colors)) + 
+    geom_point(aes(x=PC1, y=PC2, fill=group, col=group, text=headline), position = position_jitter(w = 0.2, h = 0.2), size=1, alpha=0.4) + theme_bw() + scale_fill_manual(values = colors, breaks=names(colors)) +
     theme(aspect.ratio=1, legend.title=element_blank()) +
     scale_color_manual(values = colors, breaks=names(colors))
+  
+  # p <- ggplot(pca.dat) +
+  #   geom_point(aes(x=PC1, y=PC2, fill=group, col=group, text=headline), size=1, alpha=0.4) + theme_bw() + scale_fill_manual(values = colors, breaks=names(colors)) + 
+  #   theme(aspect.ratio=1, legend.title=element_blank()) +
+  #   scale_color_manual(values = colors, breaks=names(colors))
   
   pl <- ggplotly(p, tooltip = c("text")) %>% layout(legend = list(x = 0, y = 100, orientation = 'h')) 
   pl$x$data[[1]]$name <- "Delfi"

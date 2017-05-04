@@ -2,11 +2,14 @@ source("helpers.R")
 
 cleandata <- read.csv("../data/meediadata_cleaned2.csv")
 vectors <- read.csv("../data/vecs_final2.csv")
+# Ühesõnalised välja
+vectors <- vectors[-c(which(vectors$cleaned_pealkiri %in% c("Suhtehoroskoop", "Telesoovitused", "Külavaheküsitlus", "Metsakaja"))),]
 cleandata$postag_descriptions <-factor(cleandata$postag_descriptions, levels=c("nimisõna", "tegusõna", "pärisnimi", "lausemärk", "määrsõna", "omadussõna algvõrre", "asesõna", "sidesõna", "kaassõna", "põhiarvsõna", "lühend", "omadussõna keskvõrre", "järgarvsõna", "omadussõna ülivõrre", "käändumatu omadussõna", "verbi juurde kuuluv sõna", "hüüdsõna", ""))
 # eemalda tühjad postagid
 cleandata <- cleandata %>% subset(postag_descriptions!="")
 
-colors <- c("#ffc820", "#0054a6", "#cf0007", "#00adee") # delfi, err, ohtuleht, postimees
+#colors <- c("#ffc820", "#0054a6", "#cf0007", "#00adee") # delfi, err, ohtuleht, postimees
+colors <- c("#ffc820", "black", "#cf0007", "#00adee")
 allikad <- c("delfi", "err", "ohtuleht", "postimees")
 names(colors) <- allikad
 ilus_allikad <- c("Delfi", "ERR", "Õhtuleht", "Postimees")
